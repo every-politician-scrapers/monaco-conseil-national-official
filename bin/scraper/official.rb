@@ -3,10 +3,8 @@
 
 require 'every_politician_scraper/scraper_data'
 
-# TODO: fetch data from the individual member pages
-class Legislature
-  # details for an individual member
-  class Member < Scraped::HTML
+class MemberList
+  class Member
     field :id do
       url.split('/').last
     end
@@ -19,6 +17,9 @@ class Legislature
       noko.xpath('preceding::h6').last.text
     end
 
+    field :position do
+    end
+
     private
 
     def url
@@ -26,12 +27,11 @@ class Legislature
     end
   end
 
-  # The page listing all the members
-  class Members < Scraped::HTML
+  class Members
     decorator Scraped::Response::Decorator::CleanUrls
 
-    field :members do
-      noko.css('#post-13068 li').map { |mp| fragment(mp => Member).to_h }
+    def member_container
+      noko.css('#post-13068 li')
     end
   end
 end
